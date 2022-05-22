@@ -7,7 +7,7 @@
 <!ENTITY github "Squidly271/docker.folder">
 <!ENTITY plugdir "/usr/local/emhttp/plugins/&name;">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/main/plugins/&name;.plg">
-<!ENTITY md5 "795329f8a34a98da1b444c774500029e">
+<!ENTITY md5 "83ecd3319c86bdd0b9b6f23bb38e0d4f">
 ]>
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="docker" support="https://forums.unraid.net/topic/89702-plugin-docker-folder/" min="6.10.0">
 <CHANGES>
