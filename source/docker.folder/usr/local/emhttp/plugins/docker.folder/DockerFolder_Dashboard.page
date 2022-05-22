@@ -1,0 +1,274 @@
+Menu="Dashboard"
+Icon="server"
+---
+<?php
+require_once("/usr/local/emhttp/plugins/docker.folder/include/common.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/common-docker.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/common-vm.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/loadlist_edit.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/eventControl_edit.php");
+?>
+
+<script>
+
+(function() {
+    userprefs_fix_apply()
+})();
+
+(async () => {
+    folders = {
+        docker: {},
+        vm: {}
+    }
+    dockerFolders = await read_folders('folders')
+    vmFolders = await read_folders('folders-vm')
+    $( "<tbody id='docker_list_storage' style='display:none;'></tbody>" ).insertAfter( "#db-box3 > .docker_view" );
+    $( "<tbody id='vm_list_storage' style='display:none;'></tbody>" ).insertAfter( "#db-box3 > .vm_view" );
+})();
+
+async function apply_folder() {
+    waitForGlobal('dockerFolders', async function() {
+        let folders = await dockerFolders['folders']
+        apply_folder_dashboard('docker', folders, dockerOptions)
+    })
+    waitForGlobal('vmFolders', async function() {
+        let folders = await vmFolders['folders']
+        apply_folder_dashboard('vm', folders, vmOptions)
+    })
+}
+
+async function apply_folder_dashboard(_type, _folders, _options) {
+    let folderIds = Object.keys(await _folders)
+    window[`${_type}Options`]['folderChildren'] = []
+    window[`${_type}Options`]['activeFolders'] = []
+    
+    for (const folderId of folderIds) {
+        folders[_type][folderId] = new folder(folderId, _folders[folderId], _options)
+    }
+
+    for (const folderId of folderIds) {
+        edit_folder_base(folders[_type][folderId])
+        edit_folder_extra(folders[_type][folderId])
+    }
+
+    // dashboard expanded
+    for (const folderId of folderIds) {
+        const folder = folders[_type][folderId]
+
+        if (folder['properties']['dashboard_expanded_button']) {
+            dashboard_expanded_button(folder)
+        }
+
+        // dashboard_expanded - activeDropdowns
+        if (folder['properties']['dashboard_expanded'] && !folder.options['activeDropdowns'].includes(folderId)) {
+            folder.options['activeDropdowns'].push(folderId)
+        }            
+    }
+
+    // open dropdown on loadlist
+    $(`[class*="${_type}-folder-parent-"]`).each(function() {
+        let id = $(this).data('id')
+        if (_options['activeDropdowns'].includes(id) && $(this).attr('dashboard_expanded') !== 'true') {
+            $(this).attr('dashboard_expanded', true)
+            docker_toggle_visibility(id, _type)
+            $(`.${_type}-folder-parent-${id}`).children('i').toggleClass('fa-chevron-down fa-chevron-up')
+            dashboard_expanded(folders[_type][id])
+        }
+    })
+
+    addSwitchListener(_type, _options)
+}
+
+function edit_folder_extra(folder) {
+    // started only fix
+    if (folder.options['type'] === 'docker')  {
+        var selector = '#apps'
+    } else {
+        var selector = '#vms'
+    }
+
+    if ($(selector).prop('checked') && folder.parent().find("span.inner > i").hasClass('stopped')) {
+        folder.parent().hide()
+    }
+}
+
+function dashboard_expanded_button(folder) {
+    const folderId = folder.id
+    const folderType = folder.options['type']
+
+    // add button
+    if (folder.parent().children("i").length == 0) {
+        
+        let offset = folder.parent().offset()
+
+        folder.parent().css('position', 'relative').prepend(`<i class="fa fa-fw fa-chevron-up"" style="position: absolute; top: 22px; left: -16px;"></i>`)
+        folder.parent().children("i").click(function() {
+            childrenDropdown(folderId, folderType)
+            let selectionIndex = folder.parent().index()
+            $(`[class*="${folderType}-folder-parent-"]`).each(function() {
+                let id = $(this).data('id')
+                let index = $(this).index()
+                if (folder.options['activeDropdowns'].includes(id) && id !== folderId && index > selectionIndex) {
+                    childrenDropdown(id, folderType)
+                    childrenDropdown(id, folderType)
+                }
+            })
+        });
+    }
+}
+
+function addSwitchListener(type, options) {
+    if (type === 'docker')  {
+        var selector = '#apps'
+    } else {
+        var selector = '#vms'
+    }
+
+    $(selector).change(function() {
+        let tmpActiveDropdowns = []
+        $(`[class*="${type}-folder-parent-"]`).each(function() {
+            let id = $(this).data('id')
+            let stopped = $(this).find('.inner > i').hasClass('stopped')
+            if (options['activeDropdowns'].includes(id)) {
+                childrenDropdown(id, type)
+                if (!stopped) {
+                    tmpActiveDropdowns.push(id)
+                }
+            }
+        })
+        setTimeout(() => {
+            $(`[class*="${type}-folder-parent-"]`).each(function() {
+                let id = $(this).data('id')
+                if (tmpActiveDropdowns.includes(id)) {
+                    childrenDropdown(id, type)
+                }
+            })
+        }, 200);
+    })
+}
+
+function dashboard_expanded(folder) {
+    const folderId = folder.id
+    const folderType = folder.options['type']
+
+    const spaces_template = `<span class="outer solid apps ${folderType}-folder-spacer-${folderId}"><span class="inner" style="margin-left: 42px;margin-bottom: 17px;"><span class=""></span><br><i class=""></i><span></span></span></span>`
+    const dashboardElement = $(`tbody.${folderType}_view > tr > td:nth-child(2)`)
+
+    // main logic
+    var addCountStart = 0
+    var addCountEnd = 0
+    var index = dashboardElement.children('span:visible').index(dashboardElement.children(`.${folderType}-folder-parent-${folderId}`))+1
+    var rows = 3
+
+    // get rows count (should find a better way)
+    let dockerViewWidth = dashboardElement.width()
+    if (dockerViewWidth >= 1092) {
+        rows = 6
+    }else if (dockerViewWidth >= 910) {
+        rows = 5
+    } else if (dockerViewWidth >= 728) {
+        rows = 4
+    } else if (dockerViewWidth <= 545) {
+        rows = 2
+    }
+
+    while (index == 0 || Number.isInteger(index/rows) == false) {
+        addCountStart++
+        index++
+    }
+
+    // get children count
+    let childrenCount = 0
+    folder.child().each(function() {
+        if ($(this).css('display') !== 'none') {
+            childrenCount++
+        }
+    })
+
+    // fixes borders being added randomly
+    if (childrenCount === 0) {
+        return
+    }
+
+    index = index+childrenCount
+    while (index == 0 || Number.isInteger(index/rows) == false) {
+        addCountEnd++
+        index++
+    }
+
+    childrenMove(folder)
+    folder.child().removeClass('folder-hide')
+
+    // add spaces at start
+    for (i=1; i <= addCountStart; i++) {
+        $(spaces_template).insertAfter(folder.parent())
+    }
+
+    // add spaces at end
+    for (i=1; i <= addCountEnd; i++) {
+        $(spaces_template).insertAfter(dashboardElement.children(`.${folderType}-folder-child-${folderId}:visible:last`))
+    }
+
+    // add line at start
+    folder.child().each(function(i){
+        if (i < rows) {
+            $(this).css('border-top', 'inset').css('margin-bottom', '16px')
+        }
+    })
+    if (childrenCount < rows) {
+        $(`.${folderType}-folder-spacer-${folderId}`).each(function() {
+            let sIndex = $(this).index()
+            if (sIndex > dashboardElement.children(`.${folderType}-folder-child-${folderId}`).index()) {
+                $(this).css('border-top', 'inset').css('margin-bottom', '16px')
+            }
+        })
+    }
+
+    // add line at end
+    if (addCountEnd === 0) {
+        var lastIndex = folder.child().last().index()
+    } else {
+        var lastIndex = $(`.${folderType}-folder-spacer-${folderId}`).last().index()
+    }
+    for(i=0; i < addCountEnd+rows-addCountEnd; i++) {
+        $(`tbody.${folderType}_view > tr > td:nth-child(2)`).children().eq(lastIndex-i).css('border-bottom', 'solid')
+    }
+}
+
+function childrenDropdown(folderId, folderType) {
+    const folder = folders[folderType][folderId]
+
+    docker_toggle_visibility(folderId, folderType);
+    folder.parent().children('i').toggleClass('fa-chevron-down fa-chevron-up');
+
+    if (folder.parent().children('i').hasClass('fa-chevron-up')) {
+        // add to storage
+        folder.child().each(function() {
+            if (folder['properties']['children'].includes($(this).find(folder.options['dashboardHideSelectorName']).textFirst())) {
+                $(this).appendTo(`#${folderType}_list_storage`);
+            }
+        });
+        // remove folderId from activeDropdowns
+        folder.options['activeDropdowns'] = folder.options['activeDropdowns'].filter(function(elm) {
+            return elm != folderId;
+        })
+        // remove spacers
+        $(`.${folderType}-folder-spacer-${folderId}`).each(function() {
+            $(this).remove();
+        });
+    } else {
+        dashboard_expanded(folder);
+        // add folderId to activeDropdowns
+        folder.options['activeDropdowns'].push(folderId);
+    }
+}
+
+function childrenMove(folder) {
+    folder.child().reverse().each(function() {
+        if (folder['properties']['children'].includes($(this).find(folder.options['dashboardHideSelectorName']).textFirst())) {
+            $(this).insertAfter(`.${folder.options['type']}-folder-parent-${folder.id}`);
+        }
+    });
+}
+
+</script>

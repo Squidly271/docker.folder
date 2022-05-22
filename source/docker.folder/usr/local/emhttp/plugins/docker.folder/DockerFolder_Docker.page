@@ -1,0 +1,642 @@
+Menu="Docker"
+Icon="server"
+---
+<?php
+require_once("/usr/local/emhttp/plugins/docker.folder/include/common.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/common-page.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/common-docker.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/loadlist_edit.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/listview_edit.php");
+require_once("/usr/local/emhttp/plugins/docker.folder/include/eventControl_edit.php");
+?>
+
+<style type="text/css">
+    .dropdown-menu-advanced {
+        display: grid !important;
+        min-width: 540px;
+        min-height: 275px;
+        padding: 8px;
+        margin: 2px 0 0;
+        background-color: #FFF;
+        font-size: 1.3rem;
+        border-style: solid;
+        border-color: var(--border-color);
+        border-width: 1px;
+        border-radius: 5px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        -webkit-background-clip: padding-box;
+        -moz-background-clip: padding;
+        background-clip: padding-box;
+        text-align: left;
+
+        grid-template-areas: 'header-name header-info header-info'
+                             'naviagtion info info'
+                             'naviagtion info info'
+                             'extra-info info info';
+    }
+
+    .dropdown-menu-advanced > .naviagtion a {
+        display:block;
+    }
+
+    .dropdown-menu-advanced > .naviagtion li:hover, .dropdown-menu-advanced > .naviagtion li:focus {
+        color:#333;
+        text-decoration:none;
+        background-color:#0088cc;
+        background-color:#0081c2;
+        background-image:-moz-linear-gradient(top, #e1e1e1, #0077b3);
+        background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+        background-image:-webkit-linear-gradient(top, #0088cc, #0077b3);
+        background-image:-o-linear-gradient(top, #e1e1e1, #0077b3);
+        background-image:linear-gradient(to bottom, #e6e6e6, #e9e9e9);
+        background-repeat:repeat-x;
+        filter:progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+    }
+
+    .dropdown-menu-advanced > .naviagtion .active > a, .dropdown-menu-advanced > .naviagtion .active > a:hover {
+        color:#ffffff;
+        text-decoration:none;
+        background-color:#0088cc;
+        background-color:#0081c2;
+        background-image:linear-gradient(to bottom, #0088cc, #0077b3);
+        background-image:-moz-linear-gradient(top, #0088cc, #0077b3);
+        background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+        background-image:-webkit-linear-gradient(top, #0088cc, #0077b3);
+        background-image:-o-linear-gradient(top, #0088cc, #0077b3);
+        background-repeat:repeat-x;
+        outline:0;
+        filter:progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+    }
+
+    .dropdown-menu-advanced td, .dropdown-menu-advanced th{
+        width: 1%;
+        white-space: nowrap;
+    }
+
+    .dropdown-menu-advanced > .header-name th:not(:first-child), .dropdown-menu-advanced > .header td:not(:first-child) {
+        padding-left: 8px;
+    }
+
+    .dropdown-menu-advanced > [class*="header-"] {
+        background-color: #f3f3f3;
+        height: 80px;
+        margin-bottom: 8px;
+    }
+
+    .dropdown-menu-advanced > .header-name {
+        grid-area: header-name;
+        border-style: solid;
+        border-color: var(--border-color);
+        border-width: 1px;
+        border-radius: 5px 0px 0px 5px;
+        margin-right: -5px;
+    }
+
+    .dropdown-menu-advanced > .header-info {
+        grid-area: header-info;
+        border-style: solid solid solid none;
+        border-color: var(--border-color);
+        border-width: 1px;
+        border-radius: 0px 5px 5px 0px;
+        margin-left: 5px;
+    }
+
+    .dropdown-menu-advanced > .header-name > .ct-name {
+        padding-left: 8px;
+        padding-right: 4px;
+        padding-top: 10px;
+    }
+
+    .dropdown-menu-advanced > .header-name > .ct-name > .outer > .inner {
+        padding-top: 5px;
+        padding-left: 2px;
+    }
+
+    .dropdown-menu-advanced > .header-info th {
+        background-color: #CED1D3;
+    }
+
+    .dropdown-menu-advanced > .header-info th:first-child, .dropdown-menu-advanced > .header-info td:first-child {
+        padding-left: 8px;
+    }
+
+    .dropdown-menu-advanced > .header-name span > img {
+        height: 58px;
+        width: 58px;
+        margin-right: 4px;
+    }
+
+    .dropdown-menu-advanced > .naviagtion {
+        grid-area: naviagtion;
+        padding-bottom: 8px;
+    }
+
+    .dropdown-menu-advanced > .naviagtion > div {
+        display: inline-block;
+    }
+
+    .dropdown-menu-advanced > .naviagtion li {
+        display: block;
+        padding: 4px;
+    }
+
+    .dropdown-menu-advanced > .naviagtion li > a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .dropdown-menu-advanced > .info {
+        grid-area: info;
+        padding-left: 5px;
+        min-width: inherit;
+    }
+
+    .dropdown-menu-advanced > .info > * {
+        background: #F1F2F4;
+    }
+
+    .dropdown-menu-advanced > .info > div {
+        border-style: solid;
+        border-color: var(--border-color);
+        border-width: 1px;
+        border-radius: 5px;
+    }
+
+    .dropdown-menu-advanced > .info .ports {
+        border-bottom-style: solid;
+        border-color: var(--border-color);
+        border-width: 1px;
+        padding-bottom: 10px;
+    }
+
+    .dropdown-menu-advanced > .info .mapping > div {
+        display: flex;
+    }
+
+    .dropdown-menu-advanced > .info .mapping > div > :first-child {
+        float: left;
+    }
+
+    .dropdown-menu-advanced > .info .mapping > div > :last-child {
+        display: table;
+    }
+
+    .dropdown-menu-advanced > .info button {
+        font-family: sans-serif;
+        font-size: 11px;
+        letter-spacing: inherit;
+        text-transform: inherit;
+        border: none;
+        margin: 0px;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        color: #666;
+        border-style: solid;
+        border-color: var(--border-color);
+        border-width: 1px;
+        border-radius: 5px;
+    }
+
+    .dropdown-menu-advanced > .extra-info {
+        grid-area: extra-info;
+        white-space: nowrap;
+        background-color: #fff6de;
+        border-style: solid;
+        border-color: var(--border-color);
+        border-width: 1px;
+        border-radius: 5px;
+        padding: 8px;
+    }
+
+    .tooltipster-docker-folder > .tooltipster-box {
+        border: initial !important;
+        background: initial;
+    }
+
+    .tooltipster-docker-folder > .tooltipster-box > .tooltipster-content {
+        color: initial;
+        padding: initial;
+        overflow: initial;
+    }
+</style>
+
+<script src="/plugins/docker.folder/include/chart/Chart.bundle.min.js"></script>
+<script src="/plugins/docker.folder/include/chart/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="/plugins/docker.folder/include/chart/chartjs-plugin-streaming.min.js"></script>
+<script>
+
+(function() {
+    userprefs_fix_apply('docker')
+})();
+
+(async () => {
+    folders = {
+        docker: {}
+    }
+    dockerFolders = await read_folders('folders')
+    $( "<tbody id='docker_list_storage' style='display:none;'></tbody>" ).insertAfter( "#docker_list" );
+})();
+
+async function apply_folder(callback) {
+    const type = 'docker'
+    waitForGlobal("dockerFolders", async function() {
+        let dfSettings = await dockerFolders['settings']
+        if (dfSettings['fix_docker_page_shifting']) {
+            $('#docker_containers > thead > tr > th').each(function(i, e) {
+                if (i > 0) {
+                    if (i === 2) {
+                        $(e).css('min-width', $(e).width())
+                    } else {
+                        $(e).width($(e).width())
+                    }
+                }
+            })
+        }
+
+        if (dfSettings['nuke_uptime_column']) {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                #docker_containers > thead > tr > th:nth-last-child(2),
+                #docker_list [class*="sortable"] > td:nth-last-child(2) {
+                    display: none;
+                }
+            `
+            document.head.appendChild(style)
+
+            $('#docker_list > tr.advanced').each(function() {
+                $(this).children('td:nth-child(2)').attr('colspan', '5')
+                $(this).children('td:last-child').attr('colspan', '2')
+            })
+        }
+
+        let dFolders = await dockerFolders['folders']
+        let folderIds = Object.keys(await dFolders)
+        window[`${type}Options`]['folderChildren'] = []
+        window[`${type}Options`]['activeFolders'] = []
+        
+        for (const folderId of folderIds) {
+            folders[type][folderId] = new folder(folderId, dFolders[folderId], dockerOptions)
+        }
+
+        for (const folderId of folderIds) {
+            const folder = folders[type][folderId]
+
+            edit_folder_base(folder)
+            edit_folder_extra(folder)
+            cpuMemoryLoad(folder)
+            advancedContextMenu(folder)
+        }
+        callback()
+    });
+}
+
+function cpuMemoryLoad(folder) {
+    var cpuLoad = 0.00
+    var memoryLoad = 0.00
+    var memoryMax = 0.00
+
+    if ($('input.advancedview').prop('checked')) {
+        folder.child().each(function() {
+            cpuLoad += parseFloat($(this).find("td.advanced > [class*='cpu-']").text().replace(/\%/g, ""))
+            let memory = getMemUsage($(this))
+                memoryLoad += memory['load']
+                memoryMax = (memory['max'] != 0) ? memory['max'] : memoryMax
+        });
+
+        folder.parent().find('td.advanced > .cpu').text(cpuLoad.toFixed(2) + '%')
+        folder.parent().find('td.advanced > .usage-disk > #cpu').css('width', `${cpuLoad.toFixed(2)}%`)
+        folder.parent().find('td.advanced > .mem').text(`${formatBytes(memoryLoad)} / ${memoryMax}`)
+    }
+    
+    setTimeout(cpuMemoryLoad.bind(null, folder), 2000);
+}
+
+function getMemUsage(childElement) {
+    let memory = childElement.find("td.advanced > [class*='mem-']").text().match(/(\d*\.?\d*(?:\w+))/g)
+
+    memoryMax = memory[1] || 0
+    memoryLoad = formatToBytes(memory[0]) || 0
+
+    return {load: memoryLoad, max: memoryMax}
+}
+
+function formatToBytes(mem) {
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+    const match = /(\d*\.?.+\d+)(\w+)/g.exec(mem) || []
+    let num = parseFloat(match[1])
+    const size = match[2]
+
+    num *= (1024**sizes.indexOf(size))
+
+    return num
+}
+
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + '' + sizes[i];
+}
+
+function advancedContextMenu(folder) {
+    if (folder['properties']['docker_preview_advanced_context_menu']) {
+        listview_edit()
+//dockerload.start();
+//        $.post('/plugins/dynamix.docker.manager/include/UpdateConfig.php', {action:'docker_load_start'});
+        for (const child of folder['properties']['children']) {
+            let id = folder.options['ids'][child]
+            const dropdownMenuAdvancedElement = `
+                <div class="dropdown-menu-advanced" id="dropdown-advanced-${id}">
+                    <div class="header-name">
+                    <div class="ct-name">
+                        </div>
+                    </div>
+                    <div class="header-info">
+                        <table style="display: contents; height: 100%; width: 100%; background-color: transparent; margin: 0px;">
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>CPU/MEM</th>
+                                    <th>Autostart</th>
+                                    <th>Log</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="version"></td>
+                                    <td class="cpu-mem"></td>
+                                    <td class="autostart">
+                                        <input type="checkbox" id="${id}-preview-auto" class="autostart" container="${child}">
+                                    <td class="log"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="naviagtion">
+                        <div class="buttons" style="min-height: 125px;"></div>
+                    </div>
+                    <div class="info">
+                        <button name="graphs">Graphs</button>
+                        <button name="mapping">Mapping</button>
+                        <div style="min-height: 176px; min-width: 100%; max-width: 540px;">
+                            <div class="graphs">
+                                <div class="chart-combined" style="float: left; position: relative; height: 170px; width: 540px;">
+                                    <canvas></canvas>
+                                </div>
+                                <div class="chart-cpu" style="float: left; position: relative; height: 170px; width: 270px;">
+                                    <canvas></canvas>
+                                </div>
+                                <div class="chart-mem" style="float: left; position: relative; height: 170px; width: 270px;">
+                                    <canvas></canvas>
+                                </div>
+                            </div>
+                            <div class="mapping" style="display: none; padding: 10px; max-height: 150px; overflow-y: auto;">
+                                <div class="network">
+                                    <span class="blue-text" style="padding-right: 18px;">Network: </span>
+                                    <span>NETWORK-TYPE</span>
+                                </div>
+                                <div class="ports">
+                                    <span class="blue-text" style="padding-right: 36px;">Ports: </span>
+                                </div>
+                                <div class="paths" style="padding-top: 10px;">
+                                    <span class="blue-text" style="padding-right: 36px;">Paths: </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="extra-info"></div>
+                </div>
+            `
+
+            // header
+            let clone = $(dropdownMenuAdvancedElement).clone(true)
+            let dockerElement = $(`#${id}`).parent().parent().parent().clone(true)       
+
+
+            let ctNameElement = dockerElement.children('.ct-name')
+                let extraInfo = ctNameElement.children('.advanced').remove()
+                ctNameElement.find('.outer > .hand').removeAttr('class').attr('id', `advanced-context-${id}`)
+                ctNameElement.find('.outer > .inner > .appname').css({
+                    'font-size': 'larger',
+                    'font-weight': 'bold'
+                })
+            let dockerVersion = dockerElement.children('.updatecolumn')
+                dockerVersion.children('.advanced').removeClass('advanced')
+            let dockerCpuMem = dockerElement.children('.advanced')
+                dockerCpuMem.children('br').remove()
+            let dockerAutostart = dockerElement.children(':nth-last-child(2)')
+                dockerAutostart.find('[id*="-wait"]').css({
+                    'display': 'block',
+                    'float': 'initial',
+                    'transform': 'translateX(10px)'
+                })
+            let dockerLog = '<i class="fa fa-fw fa-navicon fa-lg "></i>'
+
+            let trBody = clone.find('.header-info > table > tbody > tr')
+                clone.find('.header-name > div').html(ctNameElement.html())
+                trBody.children('td.version').html(dockerVersion.html())
+                trBody.children('td.cpu-mem').html(dockerCpuMem.html())
+                trBody.children('td.log').html(dockerLog).click(function() {
+									 openTerminal('docker', child,'.log')                   
+                })
+                trBody.children('td.autostart').append(dockerAutostart.find('[id*="-wait"]'))
+                let autostart = trBody.find(`td.autostart > #${id}-preview-auto`)
+                    autostart.switchButton({labels_placement: 'right', checked: $(`#${id}-auto`).prop('checked')})
+                    autostart.change(function() {
+                        $(`#${id}-auto`).next().click()
+                    })
+
+            // naviagtion
+						// 6.10.0 doesn't pre-generate the context.  So, generate them all in advance;
+						var contextMenus = $(`#${id}`).attr("onclick");
+						eval(contextMenus)
+						
+            let dropdownElement = $(`#dropdown-${id}`).clone(true)
+						
+                dropdownElement.children('.divider').remove()
+                dropdownElement.children().slice(0, 5).wrapAll('<div style="float: left; border-right-style: solid; border-color: var(--border-color); border-width: 1px;"></div>')
+                dropdownElement.children('li').wrapAll('<div style="float: right;"></div>')
+            clone.find('.naviagtion > .buttons').html(dropdownElement.html())
+						$('.buttons').html("WHATTHEFUCK");
+            // close tooltip on button click
+            clone.find('.naviagtion > .buttons > div > li > a').click(function() {
+                $(`.docker-preview-id-${id}`).tooltipster('close')
+            })
+
+            // info
+            let ports = dockerElement.find(':nth-child(4) > :first-child').removeAttr('class')
+            let network = dockerElement.children(':nth-child(3)').text()
+            let paths = dockerElement.find(':nth-child(5) > :first-child').removeAttr('class')
+
+            clone.find('.info .ports').append(ports)
+            clone.find('.info .network > span:last-child').text(network)
+            clone.find('.info .paths').append(paths)
+
+            clone.find('.extra-info').html(extraInfo.html())
+
+            // button
+            clone.find('.info > button').click(function() {
+                let name = $(this).attr('name')
+                let div = clone.find('.info > div')
+                if(name === 'graphs') {
+                    div.children('.graphs').show()
+                    div.children('.mapping').hide()
+                } else {
+                    div.children('.graphs').hide()
+                    div.children('.mapping').show()
+                }
+            })
+
+            // settings
+            cpuDataset = {
+                            label: 'CPU',
+                            borderColor: 'rgb(96, 151, 75)',
+                            backgroundColor: 'rgba(181, 210, 171, 0.7)',
+                            borderWidth: 0,
+                            data: []
+                        }
+
+            memDataset = {
+                            label: 'MEM',
+                            borderColor: 'rgb(82, 159, 211)',
+                            backgroundColor: 'rgba(192, 216, 233, 0.7)',
+                            borderWidth: 0,
+                            data: []
+                        }
+
+            let charts = []
+            switch (folder['properties']['docker_preview_advanced_context_menu_graph_mode']) {
+                case 'none':
+                    clone.find('.info > button:first-child').hide()
+                    clone.find('.info > div > .graphs').hide()
+                    clone.find('.info > div > .mapping').show()
+                    break;
+
+                case 'split':
+                    clone.find('.info > div > .graphs > .chart-combined').hide()
+                    let cpuChartCtx = clone.find('.info .graphs > .chart-cpu > canvas')[0].getContext('2d');
+                    let memChartCtx = clone.find('.info .graphs > .chart-mem > canvas')[0].getContext('2d');
+                    let cpuChart = makeChart(cpuChartCtx, [cpuDataset])
+                    let memChart = makeChart(memChartCtx, [memDataset])
+                    charts.push(cpuChart, memChart)
+                    break;
+
+                case 'combined':
+                    clone.find('.info > div > .graphs > .chart-cpu').hide()
+                    clone.find('.info > div > .graphs > .chart-mem').hide()
+                    let combinedChartCtx = clone.find('.info .graphs > .chart-combined > canvas')[0].getContext('2d');
+                    let combinedChart = makeChart(combinedChartCtx, [cpuDataset, memDataset])
+                    charts.push(combinedChart)
+                    break;
+            }
+
+            // charts
+            function makeChart(ctx, datasets) {
+                let chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: datasets
+                    },
+                    options: {
+                        plugins: {
+                            streaming: {
+                                frameRate: 1
+                            }
+                        },
+                        maintainAspectRatio: false,
+                        scales: {
+                            xAxes: [{
+                                type: 'realtime',
+                                realtime: {
+                                    duration: 300000,    // data in the past 20000 ms will be displayed
+                                    refresh: 5000,      // onRefresh callback will be called every 1000 ms
+                                    delay: 500,        // delay of 1000 ms, so upcoming values are known before plotting a line
+                                    pause: false,       // chart is not paused
+                                    ttl: undefined,     // data will be automatically deleted as it disappears off the chart
+                                    onRefresh: function(chart) {
+                                        chart.data.datasets.forEach(function(dataset) {
+                                            if (dataset['label'] === 'CPU') {
+                                                let usage = parseFloat($(`#${id}`).parent().parent().parent().find('.advanced > span:first-child').text())
+                                                dataset.data.push({
+                                                    x: Date.now(),
+                                                    y: usage.toFixed(2)
+                                                });
+                                            } else {
+                                                let memory = getMemUsage($(`#${id}`).parent().parent().parent())
+                                                let usage = memory['load'] / formatToBytes(memory['max']) * 100
+                                                dataset.data.push({
+                                                    x: Date.now(),
+                                                    y: usage.toFixed(2)
+                                                });
+                                            }
+                                        });
+                                    }
+                                },
+                                time: {
+                                    tooltipFormat:'dd MMM, yyyy, HH:mm:ss',
+                                    displayFormats: {
+                                        millisecond: 'H:mm:ss.SSS',
+                                        second: 'H:mm:ss',
+                                        minute: 'H:mm',
+                                        hour: 'H',
+                                        day: 'MMM D',
+                                        week: 'll',
+                                        month: 'MMM YYYY',
+                                        quarter: '[Q]Q - YYYY',
+                                        year: 'YYYY'
+                                    },
+                                },
+                                ticks: {
+                                    fontSize: 8
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    min: 0,
+                                    fontSize: 8
+                                }
+                            }]
+                        }
+                    }
+                });
+                return chart
+            }
+
+            $(`.docker-preview-id-${id}`).tooltipster({
+                interactive: true,
+                theme: ['tooltipster-docker-folder'],
+                content: clone,
+                trigger: folder['properties']['docker_preview_advanced_context_menu_activation_mode'],
+                zIndex: 90000,
+                functionBefore: function() {
+                    for (const chart of charts) {
+                        chart.options.plugins.streaming.frameRate = 30
+                        chart.update();
+                    }
+                },
+                functionAfter: function() {
+                    for (const chart of charts) {
+                        chart.options.plugins.streaming.frameRate = 1
+                        chart.update();
+                    }
+                }
+            });
+        }
+    }
+}
+
+$('<input/>', {
+    type: 'button',
+    onclick: 'addFolder("docker")',
+    value: 'Add Folder',
+    style: 'display:none'
+}).insertBefore('div.content > input:first-of-type');
+
+</script>
