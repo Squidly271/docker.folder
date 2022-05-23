@@ -437,7 +437,10 @@ class folder {
     }
 
     function getDockerWebUI(id) {
-        let href = $(`#dropdown-${id}`).find('li:first-child > a').attr('href')
+				var contextMenus = $(`#${id}`).attr("onclick");
+				eval(contextMenus)			
+        
+				let href = $(`#dropdown-${id}`).find('li:first-child > a').attr('href')
         
         if (href !== '#') {
             return href

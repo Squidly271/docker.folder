@@ -2,15 +2,18 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name "docker.folder">
 <!ENTITY author "GuildDarts">
-<!ENTITY version "2022.05.22">
+<!ENTITY version "2022.05.23">
 <!ENTITY launch "Docker/AddFolder">
 <!ENTITY github "Squidly271/docker.folder">
 <!ENTITY plugdir "/usr/local/emhttp/plugins/&name;">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/main/plugins/&name;.plg">
-<!ENTITY md5 "83ecd3319c86bdd0b9b6f23bb38e0d4f">
+<!ENTITY md5 "96a48617cbb22775c0d1c5fe7e554f9e">
 ]>
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="docker" support="https://forums.unraid.net/topic/89702-plugin-docker-folder/" min="6.10.0">
 <CHANGES>
+###2022.05.23
+- WebUI icon wasn't appearing
+
 ###2022.05.22
 - 6.10.0 fork with compatibility fixes by Squid
 
