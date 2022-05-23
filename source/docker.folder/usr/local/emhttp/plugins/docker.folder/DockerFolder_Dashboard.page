@@ -1,4 +1,4 @@
-Menu="Dashboard123"
+Menu="Dashboard"
 Icon="server"
 ---
 <?php
@@ -151,7 +151,7 @@ function dashboard_expanded(folder) {
     const folderId = folder.id
     const folderType = folder.options['type']
 
-    const spaces_template = `<span class="outer solid apps ${folderType}-folder-spacer-${folderId}"><span class="inner" style="margin-left: 42px;margin-bottom: 17px;"><span class=""></span><br><i class=""></i><span></span></span></span>`
+    const spaces_template = `<span class="outer solid apps ${folderType}-folder-spacer-${folderId}"><span class="inner" style="margin-left: 42px;margin-bottom: 2rem;"><span class=""></span><br><i class=""></i><span></span></span></span>`
     const dashboardElement = $(`tbody.${folderType}_view > tr > td:nth-child(2)`)
 
     // main logic
