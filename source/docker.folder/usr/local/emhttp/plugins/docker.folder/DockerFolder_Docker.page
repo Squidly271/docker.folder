@@ -464,7 +464,6 @@ function advancedContextMenu(folder) {
                 dropdownElement.children().slice(0, 5).wrapAll('<div style="float: left; border-right-style: solid; border-color: var(--border-color); border-width: 1px;"></div>')
                 dropdownElement.children('li').wrapAll('<div style="float: right;"></div>')
             clone.find('.naviagtion > .buttons').html(dropdownElement.html())
-						$('.buttons').html("WHATTHEFUCK");
             // close tooltip on button click
             clone.find('.naviagtion > .buttons > div > li > a').click(function() {
                 $(`.docker-preview-id-${id}`).tooltipster('close')

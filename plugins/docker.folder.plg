@@ -2,7 +2,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name "docker.folder">
 <!ENTITY author "GuildDarts">
-<!ENTITY version "2022.05.23a">
+<!ENTITY version "2022.06.18">
 <!ENTITY launch "Docker/AddFolder">
 <!ENTITY github "Squidly271/docker.folder">
 <!ENTITY plugdir "/usr/local/emhttp/plugins/&name;">
@@ -11,6 +11,9 @@
 ]>
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="docker" support="https://forums.unraid.net/topic/89702-plugin-docker-folder/" min="6.10.0">
 <CHANGES>
+###2022.06.18
+- Removing Debugging Info
+
 ###2022.05.23a
 - Re-add dashboard
 
