@@ -422,7 +422,14 @@ function dockerPreview(folder) {
                     idElement.removeAttr('id')
                     idElement.addClass(`docker-preview-id-${id}`)
                     if (folder['properties']['docker_preview_icon_show_log']) {
-                        clone.find('.outer > .inner').append(`<a href="#" onclick="openTerminal('docker', '${name}','.log')" style="color: initial;"><i class="fa fa-fw fa-navicon fa-lg" style="color: var(--preview-icon); opacity: 0.6; transform: translateY(1.2px);"></i></a>`)
+                        if (folder['options']['type'] === 'vm') {
+                            var tag = `log`
+                            var more = `libvirt/qemu/${name}.log`
+                         } else {
+                            var tag = `docker`
+                            var more = `.log`
+                        }
+                        clone.find('.outer > .inner').append(`<a href="#" onclick="openTerminal('${tag}', '${name}','${more}')" style="color: initial;"><i class="fa fa-fw fa-navicon fa-lg" style="color: var(--preview-icon); opacity: 0.6; transform: translateY(1.2px);"></i></a>`)
                     }
                     if (folder['properties']['docker_preview_icon_show_webui']) {
                         let webui = getDockerWebUI(folder.options['ids'][name])
