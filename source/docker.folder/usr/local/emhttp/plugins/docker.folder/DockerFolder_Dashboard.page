@@ -209,6 +209,10 @@ function dashboard_expanded(folder) {
         $(spaces_template).insertAfter(dashboardElement.children(`.${folderType}-folder-child-${folderId}:visible:last`))
     }
 
+    // since unRAID 6.10.x the logic bellow for drawing lines does not work
+    // code is not removed in case someone wants to fix it in the future
+    return;
+
     // add line at start
     folder.child().each(function(i){
         if (i < rows) {
