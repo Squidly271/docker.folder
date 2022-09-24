@@ -305,7 +305,9 @@ function childrenDropdown(folder) {
             let cookieArray = cookie.split(',')
 
             for (const cookie of cookieArray) {
-                slideDownRows($(`#${cookie}`))
+                if (cookie) {
+                    slideDownRows($(`#${cookie}`))
+                }
             }
         }
 
