@@ -2,15 +2,19 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name "docker.folder">
 <!ENTITY author "GuildDarts">
-<!ENTITY version "2022.06.19">
+<!ENTITY version "2022.09.24">
 <!ENTITY launch "Docker/AddFolder">
 <!ENTITY github "Squidly271/docker.folder">
 <!ENTITY plugdir "/usr/local/emhttp/plugins/&name;">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/main/plugins/&name;.plg">
-<!ENTITY md5 "949c50659ab2fc39ab02edd0e3cf6541">
+<!ENTITY md5 "6db0bf3c7b6655e5e931f50b8ef0a4a4">
 ]>
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="docker" support="https://forums.unraid.net/topic/89702-plugin-docker-folder/" min="6.10.0">
 <CHANGES>
+###2022.09.24
+- Fix broken VM expand
+- Fix dashboard docker folders
+
 ###2022.06.19
 - TheCode's fixes for VM logs
 
