@@ -1,5 +1,5 @@
 6d446dcabb3a183f4ff7bc1e725ad52f  ./AddFolder.page
-2e1f9db5d99502b8b131b3f69c96a9fd  ./DockerFolder_Dashboard.page
+19928ed344eb07ba23a8e22b25514365  ./DockerFolder_Dashboard.page
 17f779c760a0482ba9277960189b791a  ./DockerFolder_Docker.page
 2a899e532dcaf5611d0e1075380feaf1  ./DockerFolder_navbar.page
 6a70d2aedca34af7779dd67b8668cd7f  ./DockerFolder_VMs.page
@@ -16,7 +16,7 @@ fab5bd9a9f6915e8b2d3be9355bb2df2  ./include/chart/Chart.bundle.min.js
 ebae23730a6eda7c7c83fec59c89bdc7  ./include/chart/chartjs-adapter-date-fns.bundle.min.js
 b85917a8d6600947e7599bb02bc6284f  ./include/chart/chartjs-plugin-streaming.min.js
 19a8597611e23dd31104963d37c68b04  ./include/common-docker.php
-6fdd1a05bef8aaf98062fb509ce2e940  ./include/common-page.php
+46cac2936f851b24c21ec1c512c0a8f6  ./include/common-page.php
 4291cf7e2a460beb3f7fe9d4fa66a92c  ./include/common-vm.php
 5bc3fd85ec147594a800977dbfe1fe25  ./include/common.php
 d3d50f1768015b4588f135997cd2da35  ./include/eventControl_edit.php
@@ -24,7 +24,7 @@ d3d50f1768015b4588f135997cd2da35  ./include/eventControl_edit.php
 61ede6efe04fa1f5cc60f0f8e97959eb  ./include/fa-icon-picker/simple-iconpicker.js
 fcf5a62036ff2bcdb55365f512c3a414  ./include/folderVersion.php
 c56b4b781437e16cbb55562ec38497db  ./include/freezeframe.min.js
-50db064f9e704b3344ed5c846430d191  ./include/helpers.php
+d787f5718ecb266f0b8ae23adc3f07b4  ./include/helpers.php
 35edaff50d195a34607d18a9323474a4  ./include/image-picker/image-picker.css
 b25e6b5b06e99e5d3a1671e82ba1da69  ./include/image-picker/image-picker.min.js
 6291ad5ca3084a799311c0a244c53dd3  ./include/jquery.switchbutton-latest.js
@@ -32,7 +32,7 @@ f859b96aa1207b2edafab5d924928546  ./include/listview_edit.php
 b7e61c1134708230ea4eb2064298498c  ./include/loadlist_edit.php
 a45a686cd16c9afff4220e98b6c4292e  ./README.md
 c63c81d3d9d38baace37f36e11d7f08e  ./scripts/action_docker.php
-b1a20eac11c168ff2f9a0021f5ab0d58  ./scripts/base64_to_file.php
+b26c5d47e386849b36c6ed1faf2ae9e2  ./scripts/base64_to_file.php
 4764f5420b8c066d0b41e323e13ec685  ./scripts/create_folders_file.php
 11ecef2eb7aa5f9d888e7df2d9f19499  ./scripts/docker_default_cmd.php
 60fe599b6bdddd259231dd1797a685e0  ./scripts/import-export/export.php
@@ -45,4 +45,4 @@ af5f00a5ee4ac8c69ebd64e9c5affd27  ./scripts/import-export/import.php
 053cc17ef880d0b0b7ab8822cf48d150  ./scripts/rename_child.php
 732dc391e562a4edcd285e4dcc95f4bf  ./scripts/save_folder.php
 41b30ab33857a36b4d29e7a9b0bf45b7  ./scripts/save_global-settings.php
-3ac2a3d8a32c8d848190c7434a706cf2  ./UpdateFolder.page
+c3ac2a3d8a32c8d848190c7434a706cf2  ./UpdateFolder.page
