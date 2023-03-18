@@ -10,6 +10,14 @@ require_once("/usr/local/emhttp/plugins/docker.folder/include/listview_edit.php"
 require_once("/usr/local/emhttp/plugins/docker.folder/include/eventControl_edit.php");
 ?>
 
+<script>
+$(function() {
+  if ( typeof caPluginUpdateCheck === "function" ) {
+    caPluginUpdateCheck("docker.folder.plg",{name:"Docker Folder"});
+  }
+});
+</script>
+
 <style type="text/css">
     .dropdown-menu-advanced {
         display: grid !important;
