@@ -29,7 +29,7 @@ d787f5718ecb266f0b8ae23adc3f07b4  ./include/helpers.php
 b25e6b5b06e99e5d3a1671e82ba1da69  ./include/image-picker/image-picker.min.js
 6291ad5ca3084a799311c0a244c53dd3  ./include/jquery.switchbutton-latest.js
 f859b96aa1207b2edafab5d924928546  ./include/listview_edit.php
-b7e61c1134708230ea4eb2064298498c  ./include/loadlist_edit.php
+ebd68865f92036885acdff72efba6f95  ./include/loadlist_edit.php
 a45a686cd16c9afff4220e98b6c4292e  ./README.md
 c63c81d3d9d38baace37f36e11d7f08e  ./scripts/action_docker.php
 b26c5d47e386849b36c6ed1faf2ae9e2  ./scripts/base64_to_file.php
@@ -45,4 +45,4 @@ af5f00a5ee4ac8c69ebd64e9c5affd27  ./scripts/import-export/import.php
 053cc17ef880d0b0b7ab8822cf48d150  ./scripts/rename_child.php
 732dc391e562a4edcd285e4dcc95f4bf  ./scripts/save_folder.php
 41b30ab33857a36b4d29e7a9b0bf45b7  ./scripts/save_global-settings.php
-c3ac2a3d8a32c8d848190c7434a706cf2  ./UpdateFolder.page
+3ac2a3d8a32c8d848190c7434a706cf2  ./UpdateFolder.page

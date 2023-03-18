@@ -1,3 +1,7 @@
+<?
+$unraid612 = version_compare($unRaidSettings['version'],"6.11.9",">") ? "." : "#";
+?>
+
 <script>
 function userprefs_fix(type) {
     let name = (type === 'vm') ? 'vm' : 'ct'
@@ -49,10 +53,10 @@ function userprefs_fix_apply(_type) {
     ls = ls.slice(ls.indexOf("{") + 1, ls.lastIndexOf("}"))
 
     // apply_folder docker tab
-    let docker_list_str = `$('#${type}_list').html(data[0])`
+    let docker_list_str = `$('<?=$unraid612?>${type}_list').html(data[0])`
     let docker_list_index = ls.indexOf(docker_list_str)
     if (docker_list_index !== -1) {
-        ls = ls.replace(docker_list_str, `${docker_list_str};apply_folder(function(){$('#${type}_list')`)
+        ls = ls.replace(docker_list_str, `${docker_list_str};apply_folder(function(){$('<?=$unraid612?>${type}_list')`)
         ls = ls.replace("}});", "}});});")
     } else {
         // apply_folder dashboard 
