@@ -30,11 +30,11 @@ foreach ($containers as $ct) {
 
 if (file_exists($docker_prefs_file)) {
     $docker_prefs = parse_ini_file($docker_prefs_file);
-    foreach ($docker_prefs as $prefKey => &$pref) {
-        if (!strpos($pref, '-folder') && !in_array($pref, $dockers)) {
-            array_splice($docker_prefs, $prefKey, 1);
-        }
-    }
+    // foreach ($docker_prefs as $prefKey => &$pref) {
+    //     if (!strpos($pref, '-folder') && !in_array($pref, $dockers)) {
+    //         array_splice($docker_prefs, $prefKey, 1);
+    //     }
+    // }
 } else {	
     $docker_prefs = json_encode([]);	
 }

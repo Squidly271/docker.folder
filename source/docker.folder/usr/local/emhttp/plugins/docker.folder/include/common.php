@@ -301,16 +301,19 @@ class folder {
 
         if (location.pathname === '/Dashboard') {
             let type = (folderType === 'docker') ? 'apps': 'vms'
-            var selector = `#db-box3 > tbody.${folderType}_view > tr > td:nth-child(2)`
+            var selector = `tbody#${folderType}_view > tr.updated > td`
             var folderTemplate = `<span class="outer solid ${type} stopped ${folderType}-folder-parent-${folderId}" data-id="${folderId}" data-name="${folderName}"><span class="hand" id="${folderType}-folder-${folderId}"><img src="/plugins/dynamix.docker.manager/images/question.png?1587731339" class="img"></span><span class="inner"><span class="">${folderName}</span><br><i class="fa fa-square stopped red-text"></i><span class="state">folder</span></span></span>`
         } else {
             var selector = folder['options']['listSelector']
             let name = (folderType === 'vm') ? 'vm' : 'ct'
+            // Added new docker hanle for VM and Docker
+            let dockerhandleNew ='<?= version_compare($unraid['version'], '6.12.0', '>=') ? '<i class="fa fa-arrows-v mover orange-text" style="display: none;"></i>' : '' ?>'
             if (folder['options']['type'] === 'docker') {
-                const dockerhandle = '<?= version_compare($unraid['version'], '6.9.0', '>=') ? '<td><span class="dockerhandle"><i class="fa fa-arrows-v"></i></span></td>' : '' ?>'
-                var folderTemplate = `<tr class="sortable ${folderType}-folder-parent-${folderId}" data-id="${folderId}" data-name="${folderName}"><td class="${name}-name" style="width:220px;padding:8px;"><div><span class="outer"><span class="hand" id="${folderType}-folder-${folderId}"><img src="/plugins/dynamix.docker.manager/images/question.png?1587731339" class="img"></span><span class="inner"><span class="appname"><a class="exec" onclick="editFolder('${folderId}', '${folderType}')">${folderName}</a></span><br><i class="fa fa-square stopped red-text"></i><span class="state">folder</span></span></span></td><td class="updatecolumn"></td><td colspan="3" class="dockerPreview"></td><td class="advanced" style="display: table-cell;"><span class="cpu">USAGE</span><div class="usage-disk mm"><span id="cpu" style="width: 0%;"></span><span></span></div><br><span class="mem">USAGE</span></div></td><td class="autostart"></td><td></td>${dockerhandle}</tr>`
+                let dockerhandle = '<?= version_compare($unraid['version'], '6.9.0', '>=') ? '<td><span class="dockerhandle"><i class="fa fa-arrows-v"></i></span></td>' : '' ?>'
+                dockerhandle = '<?= version_compare($unraid['version'], '6.12.0', '>=') ? '' : dockerhandle ?>'
+                var folderTemplate = `<tr class="sortable ${folderType}-folder-parent-${folderId}" data-id="${folderId}" data-name="${folderName}"><td class="${name}-name" style="width:220px;padding:8px;"><div>${dockerhandleNew}<span class="outer"><span class="hand" id="${folderType}-folder-${folderId}"><img src="/plugins/dynamix.docker.manager/images/question.png?1587731339" class="img"></span><span class="inner"><span class="appname"><a class="exec" onclick="editFolder('${folderId}', '${folderType}')">${folderName}</a></span><br><i class="fa fa-square stopped red-text"></i><span class="state">folder</span></span></span></td><td class="updatecolumn"></td><td colspan="3" class="dockerPreview"></td><td class="advanced" style="display: table-cell;"><span class="cpu">USAGE</span><div class="usage-disk mm"><span id="cpu" style="width: 0%;"></span><span></span></div><br><span class="mem">USAGE</span></div></td><td class="autostart"></td><td></td>${dockerhandle}</tr>`
             } else {
-                var folderTemplate = `<tr class="sortable ${folderType}-folder-parent-${folderId}" data-id="${folderId}" data-name="${folderName}"><td class="${name}-name" style="width:220px;padding:8px;"><div><span class="outer"><span class="hand" id="${folderType}-folder-${folderId}"><img src="/plugins/dynamix.docker.manager/images/question.png?1587731339" class="img"></span><span class="inner"><span class="appname"><a class="exec" onclick="editFolder('${folderId}', '${folderType}')">${folderName}</a></span><br><i class="fa fa-square stopped red-text"></i><span class="state">folder</span></span></span></td><td colspan="5" class="dockerPreview"></td><td class="autostart"></td></tr>`
+                var folderTemplate = `<tr class="sortable ${folderType}-folder-parent-${folderId}" data-id="${folderId}" data-name="${folderName}"><td class="${name}-name" style="width:220px;padding:8px;"><div>${dockerhandleNew}<span class="outer"><span class="hand" id="${folderType}-folder-${folderId}"><img src="/plugins/dynamix.docker.manager/images/question.png?1587731339" class="img"></span><span class="inner"><span class="appname"><a class="exec" onclick="editFolder('${folderId}', '${folderType}')">${folderName}</a></span><br><i class="fa fa-square stopped red-text"></i><span class="state">folder</span></span></span></td><td colspan="5" class="dockerPreview"></td><td class="autostart"></td></tr>`
             }
         }
 
@@ -359,7 +362,10 @@ class folder {
 
         docker_hide(folder)
         checkStatus(folder)
-
+        if (location.pathname === '/Dashboard') {
+            // In the dashboard if you toggle between 'All Apps' and 'Started only' it will show the stopped container inside the folders, this is to prevent it, hope nothing is wrong
+            $(`.${folderType}-folder-child-${folder.id}`).remove()
+        }
     }
 
     async function setIcon(folder) {
@@ -571,7 +577,7 @@ class folder {
 
         if (location.pathname === '/Dashboard') {
             $(`#${folderType}_list_storage > .${folderType}-folder-child-${folderId}`).remove()
-            var selector = `#db-box3 > tbody.${folderType}_view > tr > td:nth-child(2) > span.outer`
+            var selector = `tbody#${folderType}_view > tr.updated > td > span.outer`
             var selectorName = folder.options['dashboardHideSelectorName']
         } else {
             $(`#${folderType}_list_storage > .${folderType}-folder-child-div-${folderId} > .${folderType}-folder-child-${folderId}`).remove()

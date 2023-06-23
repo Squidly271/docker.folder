@@ -51,6 +51,8 @@ async function apply_folder_dashboard(_type, _folders, _options) {
         edit_folder_extra(folders[_type][folderId])
     }
 
+    let ff;
+
     // dashboard expanded
     for (const folderId of folderIds) {
         const folder = folders[_type][folderId]
@@ -62,7 +64,8 @@ async function apply_folder_dashboard(_type, _folders, _options) {
         // dashboard_expanded - activeDropdowns
         if (folder['properties']['dashboard_expanded'] && !folder.options['activeDropdowns'].includes(folderId)) {
             folder.options['activeDropdowns'].push(folderId)
-        }            
+        }      
+        ff = folder;      
     }
 
     // open dropdown on loadlist
@@ -77,6 +80,17 @@ async function apply_folder_dashboard(_type, _folders, _options) {
     })
 
     addSwitchListener(_type, _options)
+
+    const prefsArray = Object.values(ff['options']['prefs'])
+    let looptimes = Object.entries(folders[_type]).length
+    for (const [i, pref] of prefsArray.entries()) {
+        const id = folderIds.find((e) => {return folders[_type][e].properties['name'] === pref})
+        if(id) {
+            insertAtIndex(i + looptimes, $(`.docker-folder-parent-${id}`), `tbody#${folders[_type][id].options['type']}_view > tr.updated > td`)
+            looptimes--
+        }
+        
+    }
 }
 
 function edit_folder_extra(folder) {

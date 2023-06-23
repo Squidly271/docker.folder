@@ -247,7 +247,7 @@ $(function() {
     $( "<tbody id='docker_list_storage' style='display:none;'></tbody>" ).insertAfter( "#docker_list" );
 })();
 
-async function apply_folder(callback) {
+async function apply_folder() {
     const type = 'docker'
     waitForGlobal("dockerFolders", async function() {
         let dfSettings = await dockerFolders['settings']
@@ -288,6 +288,8 @@ async function apply_folder(callback) {
             folders[type][folderId] = new folder(folderId, dFolders[folderId], dockerOptions)
         }
 
+        let ff;
+
         for (const folderId of folderIds) {
             const folder = folders[type][folderId]
 
@@ -295,8 +297,19 @@ async function apply_folder(callback) {
             edit_folder_extra(folder)
             cpuMemoryLoad(folder)
             advancedContextMenu(folder)
+            ff = folder;
         }
-        callback()
+
+        const prefsArray = Object.values(ff['options']['prefs'])
+        let looptimes = Object.entries(folders[type]).length
+        for (const [i, pref] of prefsArray.entries()) {
+            const id = folderIds.find((e) => {return folders[type][e].properties['name'] === pref})
+            if(id) {
+                insertAtIndex(i + looptimes, $(`.docker-folder-parent-${id}`), folders[type][id]['options']['listSelector'])
+                looptimes--
+            }
+            
+        }
     });
 }
 

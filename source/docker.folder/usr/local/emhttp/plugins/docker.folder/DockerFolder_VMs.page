@@ -23,7 +23,7 @@ require_once("/usr/local/emhttp/plugins/docker.folder/include/ajaxVMDispatch_edi
     $( "<tbody id='vm_list_storage' style='display:none;'></tbody>" ).insertAfter( "#kvm_list" );
 })();
 
-async function apply_folder(callback) {
+async function apply_folder() {
     const type = 'vm'
     waitForGlobal("dockerFolders", async function() {
         let dfSettings = await dockerFolders['settings']
@@ -43,7 +43,6 @@ async function apply_folder(callback) {
             edit_folder_base(folder)
             edit_folder_extra(folder)
         }
-        callback()
     });
 }
 
